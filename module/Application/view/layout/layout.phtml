@@ -55,7 +55,7 @@
     <!-- Custom JS -->
     <script>
         $(document).ready(function () {
-            var selectedMovieId, selectedMovieName, selectedprice, selectedplaytime;
+            var selectedMovieId, selectedMovieName, selectedprice, selectedplaytime, id_order;
             var selectedSeats = [];
 
             // Mengambil data film dari API
@@ -145,11 +145,6 @@
                 $('#total-price').text("Rp. " + hitungTotalHarga());
             });
 
-            function hitungTotalHarga() {
-                var count = selectedprice * selectedSeats.length;
-                return count;
-            }
-
             $('#payButton').on('click', function () {
                 if (!selectedMovieId) {
                     alert('Silakan pilih film terlebih dahulu!');
@@ -160,9 +155,35 @@
                         ', harga: ' + selectedprice + ', jam tayang: ' + selectedplaytime +
                         ', kursi: ' +
                         selectedSeats.join(', '));
-                    $('#payModal').modal('show'); 
+                    $('#payModal').modal('show');
+                    checkID();
                 }
             });
+
+            function hitungTotalHarga() {
+                var count = selectedprice * selectedSeats.length;
+                return count;
+            }
+
+            function checkID() {
+                $.ajax({
+                    url: '<?php echo $this->basePath()?>/application/api/load-order', // ini API nya
+                    type: "GET",
+                    dataType: 'json',
+                    data: {
+                        token: 'hfjdu36498',
+                    },
+                    success: function (response) {
+                        var id_order = response.data;
+                        var jumlahData = Array.isArray(id_order) ? id_order.length : 0;
+                        console.log('ID Bayar: ' + id_order);
+                        console.log('Jumlah data: ' + jumlahData);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
         });
     </script>
 </body>

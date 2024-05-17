@@ -55,42 +55,44 @@
 
 <div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="payModalLabel">Pembayaran</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5 class="text-center">Invoice</h5>
-                <div class="table-responsive">
-                    <table class="table table-borderless">
-                        <tr>
-                            <td>Nama Film</td>
-                            <th id="film-selected">-</th>
-                        </tr>
-                        <tr>
-                            <td>Harga</td>
-                            <th id="price-selected">-</th>
-                        </tr>
-                        <tr>
-                            <td>Jam Tayang</td>
-                            <th id="playtime-selected">-</th>
-                        </tr>
-                        <tr>
-                            <td>Kursi Terpilih</td>
-                            <th id="seats-selected">-</th>
-                        </tr>
-                        <tr class="table-warning">
-                            <th>TOTAL</th>
-                            <th id="total-price">-</th>
-                        </tr>
-                    </table>
+        <form id="paymentEvent">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="payModalLabel">Pembayaran</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center">Invoice</h5>
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td>Nama Film</td>
+                                <th id="film-selected">-</th>
+                            </tr>
+                            <tr>
+                                <td>Harga</td>
+                                <th id="price-selected">-</th>
+                            </tr>
+                            <tr>
+                                <td>Jam Tayang</td>
+                                <th id="playtime-selected">-</th>
+                            </tr>
+                            <tr>
+                                <td>Kursi Terpilih</td>
+                                <th id="seats-selected">-</th>
+                            </tr>
+                            <tr class="table-warning">
+                                <th>TOTAL</th>
+                                <th id="total-price">-</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Bayar Sekarang</button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Bayar Sekarang</button>
-            </div>
-        </div>
+        </form>
     </div>
 </div>

@@ -59,10 +59,58 @@ class APICOntroller extends AbstractActionController {
 
     public function createOrderAction() {
         try {
-            //code...
+            $input = $this->getRequest()->getPost();
+            $token = $input->token;
+            $u_input = $input->data;
+
+            $this->config = $this->getServiceLocator()->get('Config');
+            $this->db = $this->config['db'];
+
+            $film = new \Application\Model\Order($this->db);
+            $data = $film->submitData($token, $u_input);
+
+            $response = $this->getResponse();
+            $response->setContent(json_encode($data));
         } catch (\Exception $e) {
-            //throw $th;
+            $decode = [
+                "code" => "2",
+                "info" => "Error: ".$e,
+                "data" => null
+            ];
+
+            $response = $this->getResponse();
+            $response->setContent(json_encode($decode));
         }
+
+        return $response;
+    }
+
+    // Order Sections
+    public function loadOrderAction() {
+        try {
+            $input = $this->getRequest()->getPost();
+            $token = $input->token;
+
+            $this->config = $this->getServiceLocator()->get('Config');
+            $this->db = $this->config['db'];
+
+            $order = new \Application\Model\Order($this->db);
+            $data = $order->readData($token);
+
+            $response = $this->getResponse();
+            $response->setContent(json_encode($data));
+        } catch (\Exception $e) {
+            $decode = [
+                "code" => "2",
+                "info" => "Error: ".$e,
+                "data" => null
+            ];
+
+            $response = $this->getResponse();
+            $response->setContent(json_encode($decode));
+        }
+
+        return $response;
     }
 
 }
