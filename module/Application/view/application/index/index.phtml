@@ -1,0 +1,96 @@
+<div class="row mt-4">
+    <h5 class="mb-3">Daftar Film Terkini</h5>
+    <hr>
+    <div class="row mt-4" id="movieList">
+        <!-- Daftar film akan dimasukkan di sini -->
+    </div>
+
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-6 col-sm-12 mt-4">
+        <h5>Pilih Kursi</h5>
+        <hr>
+        <div class="d-flex flex-wrap">
+            <?php for ($i = 1; $i <= 40; $i++): ?>
+            <button class="btn btn-outline-secondary seat-button" data-seat="<?php echo $i; ?>">
+                <?php echo $i; ?>
+            </button>
+            <?php endfor; ?>
+        </div>
+    </div>
+    <div class="col-lg-6 col-sm-12 mt-4">
+        <h5>Pembayaran</h5>
+        <hr>
+        <h6>Rincian Pesanan</h6>
+        <div class="table-responsive">
+            <table class="table table-borderless">
+                <tr>
+                    <td>Nama Film</td>
+                    <th id="film-selected">-</th>
+                </tr>
+                <tr>
+                    <td>Harga</td>
+                    <th id="price-selected">-</th>
+                </tr>
+                <tr>
+                    <td>Jam Tayang</td>
+                    <th id="playtime-selected">-</th>
+                </tr>
+                <tr>
+                    <td>Kursi Terpilih</td>
+                    <th id="seats-selected">-</th>
+                </tr>
+                <tr class="table-warning">
+                    <th>TOTAL</th>
+                    <th id="total-price">-</th>
+                </tr>
+            </table>
+        </div>
+        <button id="payButton" class="btn btn-primary">
+            <i class="fas fa-credit-card"></i> Checkout
+        </button>
+    </div>
+</div>
+
+<div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="payModalLabel">Pembayaran</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 class="text-center">Invoice</h5>
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td>Nama Film</td>
+                            <th id="film-selected">-</th>
+                        </tr>
+                        <tr>
+                            <td>Harga</td>
+                            <th id="price-selected">-</th>
+                        </tr>
+                        <tr>
+                            <td>Jam Tayang</td>
+                            <th id="playtime-selected">-</th>
+                        </tr>
+                        <tr>
+                            <td>Kursi Terpilih</td>
+                            <th id="seats-selected">-</th>
+                        </tr>
+                        <tr class="table-warning">
+                            <th>TOTAL</th>
+                            <th id="total-price">-</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Bayar Sekarang</button>
+            </div>
+        </div>
+    </div>
+</div>
