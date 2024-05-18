@@ -15,7 +15,7 @@ class Film {
         $this->adapter = new Adapter($config);   
     }
 
-    public function readData($token)
+    public function readData($token, $search)
     {   
         if (self::token !== $token) {
             $data = [
@@ -25,16 +25,33 @@ class Film {
             ];
         } else {
             $gateway = new TableGateway('film', $this->adapter);
-            $rowset = $gateway->select();
 
-            $resultSet = new ResultSet;
-            $resultSet->initialize($rowset);
-            $res = $resultSet->toArray();
-            $data = [
-                "code" => "0",
-                "info" => "OK",
-                "data" => $res
-            ];
+            if (!empty($search)) {
+                $stmt = $this->adapter->createStatement(
+                    'SELECT nama_film FROM film WHERE id_film = '.$search
+                );
+        
+                $result = $stmt->execute();
+        
+                if ($result instanceof ResultInterface && $result->isQueryResult()) {
+                    $resultSet = new ResultSet();
+                    $resultSet->initialize($result);
+        
+                    $data = $resultSet->toArray();
+                    return $data;
+                }
+            } else {
+                $rowset = $gateway->select();
+
+                $resultSet = new ResultSet;
+                $resultSet->initialize($rowset);
+                $res = $resultSet->toArray();
+                $data = [
+                    "code" => "0",
+                    "info" => "OK",
+                    "data" => $res
+                ];
+            }
         }
         
         return $data;

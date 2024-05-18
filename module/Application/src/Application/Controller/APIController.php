@@ -39,7 +39,7 @@ class APICOntroller extends AbstractActionController {
             $this->db = $this->config['db'];
 
             $film = new \Application\Model\Film($this->db);
-            $data = $film->readData($token);
+            $data = $film->readData($token, null);
 
             $response = $this->getResponse();
             $response->setContent(json_encode($data));
@@ -61,13 +61,21 @@ class APICOntroller extends AbstractActionController {
         try {
             $input = $this->getRequest()->getPost();
             $token = $input->token;
-            $u_input = $input->data;
+            $content = [
+                "id_film"               => $input->id_film,
+                "id_status_pembayaran"  => 1,
+                "no_duduk"              => $input->no_duduk
+            ];
+
+            // $data = json_encode($data);
+            // print_r($content);die;
 
             $this->config = $this->getServiceLocator()->get('Config');
             $this->db = $this->config['db'];
 
-            $film = new \Application\Model\Order($this->db);
-            $data = $film->submitData($token, $u_input);
+            // Submit Data
+            $order = new \Application\Model\Order($this->db);
+            $data = $order->submitData($token, $content);
 
             $response = $this->getResponse();
             $response->setContent(json_encode($data));

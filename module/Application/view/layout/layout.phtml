@@ -52,10 +52,12 @@
     </script>
     <!-- Include DataTables JS -->
     <script src="https://cdn.datatables.net/v/bs5/dt-2.0.7/datatables.min.js"></script>
+    <!-- Include SweetAlert2 -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
     <!-- Custom JS -->
     <script>
         $(document).ready(function () {
-            var selectedMovieId, selectedMovieName, selectedprice, selectedplaytime, id_order;
+            var selectedMovieId, selectedMovieName, selectedprice, selectedplaytime, orderID;
             var selectedSeats = [];
 
             // Mengambil data film dari API
@@ -157,6 +159,7 @@
                         selectedSeats.join(', '));
                     $('#payModal').modal('show');
                     checkID();
+                    submitData();
                 }
             });
 
@@ -168,16 +171,47 @@
             function checkID() {
                 $.ajax({
                     url: '<?php echo $this->basePath()?>/application/api/load-order', // ini API nya
-                    type: "GET",
+                    type: "POST",
                     dataType: 'json',
                     data: {
                         token: 'hfjdu36498',
                     },
                     success: function (response) {
-                        var id_order = response.data;
-                        var jumlahData = Array.isArray(id_order) ? id_order.length : 0;
-                        console.log('ID Bayar: ' + id_order);
-                        console.log('Jumlah data: ' + jumlahData);
+                        if (response.data !== null) {
+                            var idOrders = response.data.map(function(order) {
+                                return order.id_order;
+                            });
+
+                            // Find the largest id_order
+                            var largestIdOrder = Math.max.apply(null, idOrders);
+
+                            orderID = largestIdOrder+1;
+                            console.log("The largest id_order is:", largestIdOrder, orderID);
+                        } else {
+                            console.error('Error: No data found in the response.');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+
+            function submitData() {
+                var seats = selectedSeats.toString();
+
+                $.ajax({
+                    url: '<?php echo $this->basePath()?>/application/api/create-order',
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        token: 'hfjdu36498',
+                        id_film: selectedMovieId,
+                        no_duduk: seats,
+                        next_id: orderID,
+                    },
+                    success: function (response) {
+
                     },
                     error: function (xhr, status, error) {
                         console.error('Error:', error);
