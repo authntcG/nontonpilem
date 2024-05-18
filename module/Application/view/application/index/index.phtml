@@ -63,33 +63,38 @@
                 </div>
                 <div class="modal-body">
                     <h5 class="text-center">Invoice</h5>
+                    <p>Berikut merupakan rincian pembayaran yang perlu diselesaikan.</p>
                     <div class="table-responsive">
                         <table class="table table-borderless">
+                            <tr class="table-danger">
+                                <th>ID Pembayaran</th>
+                                <th id="id-checkout">-</th>
+                            </tr>
                             <tr>
                                 <td>Nama Film</td>
-                                <th id="film-selected">-</th>
+                                <th id="film-checkout">-</th>
                             </tr>
                             <tr>
                                 <td>Harga</td>
-                                <th id="price-selected">-</th>
+                                <th id="price-checkout">-</th>
                             </tr>
                             <tr>
                                 <td>Jam Tayang</td>
-                                <th id="playtime-selected">-</th>
+                                <th id="playtime-checkout">-</th>
                             </tr>
                             <tr>
                                 <td>Kursi Terpilih</td>
-                                <th id="seats-selected">-</th>
+                                <th id="seats-checkout">-</th>
                             </tr>
                             <tr class="table-warning">
                                 <th>TOTAL</th>
-                                <th id="total-price">-</th>
+                                <th id="total-price-checkout">-</th>
                             </tr>
                         </table>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary">Bayar Sekarang</button>
                 </div>
             </div>

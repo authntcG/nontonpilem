@@ -158,9 +158,12 @@
                         ', kursi: ' +
                         selectedSeats.join(', '));
                     $('#payModal').modal('show');
-                    checkID();
                     submitData();
                 }
+            });
+
+            $('.close-modal').on('click', function () {
+                clearData();
             });
 
             function hitungTotalHarga() {
@@ -211,12 +214,47 @@
                         next_id: orderID,
                     },
                     success: function (response) {
+                        var res = response.data;
+                        console.log(res);
 
+                        // Menampilkan id bayar yang dipilih pada tabel
+                        $('#id-checkout').text(res.id_order);
+                        // Menampilkan nama film yang dipilih pada tabel
+                        $('#film-checkout').text(res.nama_film);
+                        // Menampilkan harga film yang dipilih pada tabel
+                        $('#price-checkout').text('Rp. ' + selectedprice);
+                        // Menampilkan jam tayang film yang dipilih pada tabel
+                        $('#playtime-checkout').text(selectedplaytime);
+                        // Menampilkan total harga
+                        $('#total-price-checkout').text("Rp. " + hitungTotalHarga());
                     },
                     error: function (xhr, status, error) {
                         console.error('Error:', error);
                     }
                 });
+            }
+
+            function clearData() {
+                $('.select-movie').removeClass('btn-primary').addClass('btn-outline-primary');
+                $('.seat-button').removeClass('btn-success').addClass('btn-outline-secondary');
+                selectedMovieId = null;
+                selectedMovieName = null;
+                selectedplaytime = null;
+                selectedprice = 0;
+                selectedSeats = [];
+
+                // Menampilkan nama film yang dipilih pada tabel
+                $('#film-selected').text(selectedMovieName);
+                // Menampilkan harga film yang dipilih pada tabel
+                $('#price-selected').text('Rp. ' + selectedprice);
+                // Menampilkan jam tayang film yang dipilih pada tabel
+                $('#playtime-selected').text(selectedplaytime);
+                // Menampilkan total harga
+                $('#total-price').text("Rp. " + hitungTotalHarga());
+                // Menampilkan kursi terpilih
+                $('#seats-selected').text(selectedSeats);
+
+                console.log('Data Flushed :', selectedMovieId, selectedMovieName, selectedplaytime, selectedprice, selectedSeats);
             }
         });
     </script>
