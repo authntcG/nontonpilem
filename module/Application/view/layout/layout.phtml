@@ -12,10 +12,27 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
+        .screen-box {
+            width: 100%;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
         .seat-button {
+            width: 50px;
+            height: 50px;
             margin: 5px;
-            width: 60px;
-            height: 60px;
+            text-align: center;
+        }
+
+        .aisle {
+            width: 20px;
+            height: 50px;
+            margin: 5px;
         }
     </style>
 </head>
@@ -53,7 +70,7 @@
     <!-- Include DataTables JS -->
     <script src="https://cdn.datatables.net/v/bs5/dt-2.0.7/datatables.min.js"></script>
     <!-- Include SweetAlert2 -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom JS -->
     <script>
         $(document).ready(function () {
@@ -96,7 +113,13 @@
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
-                    alert('Terjadi kesalahan saat mengambil data film.');
+                    Swal.fire({
+                        title: "Galat",
+                        text: "Terjadi kesalahan dalam mengambil data film.",
+                        icon: "error",
+                        timer: 3000,
+                        timerProgressBar: true,
+                    });
                 }
             });
 
@@ -149,16 +172,43 @@
 
             $('#payButton').on('click', function () {
                 if (!selectedMovieId) {
-                    alert('Silakan pilih film terlebih dahulu!');
+                    Swal.fire({
+                        title: "Galat",
+                        text: "Silahkan pilih film terlebih dahulu",
+                        icon: "warning",
+                        timer: 3000,
+                        timerProgressBar: true,
+                    });
                 } else if (selectedSeats.length === 0) {
-                    alert('Silakan pilih kursi terlebih dahulu!');
+                    Swal.fire({
+                        title: "Galat",
+                        text: "Silahkan pilih kursi terlebih dahulu",
+                        icon: "warning",
+                        timer: 3000,
+                        timerProgressBar: true,
+                    });
                 } else {
-                    alert('Melanjutkan ke pembayaran untuk film: ' + $('#film-selected').text() +
-                        ', harga: ' + selectedprice + ', jam tayang: ' + selectedplaytime +
-                        ', kursi: ' +
-                        selectedSeats.join(', '));
-                    $('#payModal').modal('show');
-                    submitData();
+                    Swal.fire({
+                        title: "Apakah anda ingin melanjutkan ke pembayaran?",
+                        icon: "question",
+                        showDenyButton: true,
+                        showCancelButton: false,
+                        confirmButtonText: "Ya",
+                        denyButtonText: `Batal`
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            $('#payModal').modal('show');
+                            submitData();
+                        } else if (result.isDenied) {
+                            // Cancel function
+                        }
+                    });
+
+                    // alert('Melanjutkan ke pembayaran untuk film: ' + $('#film-selected').text() +
+                    //     ', harga: ' + selectedprice + ', jam tayang: ' + selectedplaytime +
+                    //     ', kursi: ' +
+                    //     selectedSeats.join(', '));
                 }
             });
 
@@ -225,6 +275,8 @@
                         $('#price-checkout').text('Rp. ' + selectedprice);
                         // Menampilkan jam tayang film yang dipilih pada tabel
                         $('#playtime-checkout').text(selectedplaytime);
+                        // Menampilkan kursi yang dipilih pada tabel
+                        $('#seats-checkout').text(selectedSeats);
                         // Menampilkan total harga
                         $('#total-price-checkout').text("Rp. " + hitungTotalHarga());
                     },
@@ -233,6 +285,43 @@
                     }
                 });
             }
+
+            $('.pay-now').on('click', function () {
+                var id = $('#id-checkout').text();
+                console.log(id);
+
+                $.ajax({
+                    url: '<?php echo $this->basePath()?>/application/api/update-order',
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        token: 'hfjdu36498',
+                        id_order: id
+                    },
+                    success: function (response) {
+                        var res = response.data;
+                        console.log(res);
+
+                        // Menampilkan id bayar yang dipilih pada tabel
+                        $('#id-checkout').text(res.id_order);
+                        // Menampilkan nama film yang dipilih pada tabel
+                        $('#film-checkout').text(res.nama_film);
+                        // Menampilkan harga film yang dipilih pada tabel
+                        $('#price-checkout').text('Rp. ' + selectedprice);
+                        // Menampilkan jam tayang film yang dipilih pada tabel
+                        $('#playtime-checkout').text(selectedplaytime);
+                        // Menampilkan kursi yang dipilih pada tabel
+                        $('#seats-checkout').text(selectedSeats);
+                        // Menampilkan total harga
+                        $('#total-price-checkout').text("Rp. " + hitungTotalHarga());
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+                
+                clearData();
+            });
 
             function clearData() {
                 $('.select-movie').removeClass('btn-primary').addClass('btn-outline-primary');

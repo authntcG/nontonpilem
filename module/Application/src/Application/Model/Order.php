@@ -90,6 +90,49 @@ class Order {
         return $data;
     }
 
+    public function updateData($token, $input, $id)
+    {
+        if (self::token !== $token) {
+            $data = [
+                "code" => "1",
+                "info" => "Error:Unauthorized",
+                "data" => null
+            ];
+        } else {
+            $gateway = new TableGateway('order', $this->adapter);
+            $result = $gateway->update($input, ['id_order' => $id]);
+
+            if ($result == 1) {
+                $stmt = $this->adapter->createStatement(
+                    'SELECT * FROM vorder WHERE id_order = '.$id
+                );
+        
+                $result = $stmt->execute();
+                
+        
+                if ($result instanceof ResultInterface && $result->isQueryResult()) {
+                    $resultSet = new ResultSet();
+                    $resultSet->initialize($result);
+        
+                    $res = $resultSet->toArray();
+                    // print_r($film[0]['nama_film']);die;
+
+                    $res = [
+                        "id_order" => $res[0]['id_order'],
+                        "status_pembayaran" => $res[0]['deskripsi']
+                    ];
+                }
+            }
+
+            $data = [
+                "code" => "0",
+                "info" => "OK",
+                "data" => $res
+            ];
+        }
+        return $data;
+    }
+
     public function checkFilmAvailable($input)
     {
         $stmt = $this->adapter->createStatement('SELECT nama_film FROM film WHERE id_film = '.$input);

@@ -11,12 +11,24 @@
     <div class="col-lg-6 col-sm-12 mt-4">
         <h5>Pilih Kursi</h5>
         <hr>
-        <div class="d-flex flex-wrap">
-            <?php for ($i = 1; $i <= 40; $i++): ?>
-            <button class="btn btn-outline-secondary seat-button" data-seat="<?php echo $i; ?>">
-                <?php echo $i; ?>
-            </button>
-            <?php endfor; ?>
+        <div class="screen mb-3 text-center">
+            <div class="screen-box bg-dark text-white py-2">LAYAR</div>
+        </div>
+        <div class="d-flex flex-wrap justify-content-center">
+            <?php 
+            $rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+            foreach ($rows as $row) {
+                echo '<div class="w-100"></div>'; // Membuat kursi dalam satu baris
+                for ($i = 1; $i <= 10; $i++) {
+                    // Menambahkan lorong di tengah
+                    if ($i == 6) {
+                        echo '<div class="aisle"></div>'; // Menambah lorong di tengah
+                    }
+                    $seat = $row . $i;
+                    echo '<button class="btn btn-outline-secondary seat-button m-1" data-seat="' . $seat . '">' . $seat . '</button>';
+                }
+            }
+            ?>
         </div>
     </div>
     <div class="col-lg-6 col-sm-12 mt-4">
@@ -95,7 +107,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Bayar Sekarang</button>
+                    <button type="button" class="btn btn-primary pay-now">Bayar Sekarang</button>
                 </div>
             </div>
         </form>
