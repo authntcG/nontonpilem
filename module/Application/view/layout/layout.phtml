@@ -48,10 +48,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Beranda</a>
+                        <a class="nav-link" aria-current="page" href="<?php echo $this->basePath()?>/">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Riwayat Pembayaran</a>
+                        <a class="nav-link" href="<?php echo $this->basePath()?>/application/riwayat">Riwayat Pembayaran</a>
                     </li>
                 </ul>
             </div>
@@ -76,6 +76,101 @@
         $(document).ready(function () {
             var selectedMovieId, selectedMovieName, selectedprice, selectedplaytime, orderID;
             var selectedSeats = [];
+
+            // Datatables initialization
+            $('#transactionsTable').DataTable({
+                "ajax": {
+                    "url": "<?php echo $this->basePath()?>/application/api/load-order", // Pastikan URL ini benar
+                    "type": "POST",
+                    "data": {
+                        "token": "hfjdu36498"
+                    },
+                    "dataSrc": function (json) {
+                        // Debug: Memeriksa struktur respon
+                        console.log(json);
+                        if (json && json.data) {
+                            return json.data;
+                        } else {
+                            console.error("Data not found in response:", json);
+                            return [];
+                        }
+                    }
+                },
+                "columns": [
+                    { "data": "id_order" },
+                    { "data": "nama_film" },
+                    { "data": "jam_tayang" },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            // Memperpendek nomor kursi menjadi maksimal 5 karakter
+                            if (row.no_duduk.length > 30) {
+                                return row.no_duduk.substring(0, 5) + '...';
+                            } else {
+                                return row.no_duduk;
+                            }
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            return 'Rp. ' + (row.harga_tiket * row.no_duduk.split(',').length).toLocaleString();
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            if (row.deskripsi === 'Menunggu Pembayaran') {
+                                return '<button class="btn btn-primary complete-payment" data-transaction-id="' + row.id_order + '">Selesaikan Pembayaran</button>';
+                            } else {
+                                return '<button class="btn btn-success btn-secondary" disabled>Selesai</button>';
+                            }
+                        }
+                    }
+                ]
+            });
+
+            // Menyelesaikan payment dari tabel histori
+            $('#transactionsTable').on('click', '.complete-payment', function () {
+                var transactionId = $(this).data('transaction-id');
+                Swal.fire({
+                    title: 'Selesaikan Pembayaran',
+                    text: 'Apakah Anda yakin ingin menyelesaikan pembayaran untuk transaksi ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Selesaikan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Implementasi logika penyelesaian pembayaran
+                        $.ajax({
+                            url: '<?php echo $this->basePath()?>/application/api/update-order',
+                            method: 'POST',
+                            data: {
+                                token: 'hfjdu36498',
+                                id_order: transactionId
+                            },
+                            success: function (response) {
+                                Swal.fire(
+                                    'Berhasil!',
+                                    'Pembayaran telah diselesaikan.',
+                                    'success'
+                                );
+                                $('#transactionsTable').DataTable().ajax.reload();
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire(
+                                    'Error!',
+                                    'Terjadi kesalahan saat menyelesaikan pembayaran.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            });
 
             // Mengambil data film dari API
             $.ajax({
@@ -221,35 +316,6 @@
                 return count;
             }
 
-            function checkID() {
-                $.ajax({
-                    url: '<?php echo $this->basePath()?>/application/api/load-order', // ini API nya
-                    type: "POST",
-                    dataType: 'json',
-                    data: {
-                        token: 'hfjdu36498',
-                    },
-                    success: function (response) {
-                        if (response.data !== null) {
-                            var idOrders = response.data.map(function(order) {
-                                return order.id_order;
-                            });
-
-                            // Find the largest id_order
-                            var largestIdOrder = Math.max.apply(null, idOrders);
-
-                            orderID = largestIdOrder+1;
-                            console.log("The largest id_order is:", largestIdOrder, orderID);
-                        } else {
-                            console.error('Error: No data found in the response.');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error:', error);
-                    }
-                });
-            }
-
             function submitData() {
                 var seats = selectedSeats.toString();
 
@@ -302,18 +368,16 @@
                         var res = response.data;
                         console.log(res);
 
-                        // Menampilkan id bayar yang dipilih pada tabel
-                        $('#id-checkout').text(res.id_order);
-                        // Menampilkan nama film yang dipilih pada tabel
-                        $('#film-checkout').text(res.nama_film);
-                        // Menampilkan harga film yang dipilih pada tabel
-                        $('#price-checkout').text('Rp. ' + selectedprice);
-                        // Menampilkan jam tayang film yang dipilih pada tabel
-                        $('#playtime-checkout').text(selectedplaytime);
-                        // Menampilkan kursi yang dipilih pada tabel
-                        $('#seats-checkout').text(selectedSeats);
-                        // Menampilkan total harga
-                        $('#total-price-checkout').text("Rp. " + hitungTotalHarga());
+                        Swal.fire({
+                            title: "Pembayaran Berhasil",
+                            text: "Pembayaran untuk ID Order : "+id+" berhasil dilakukan. ",
+                            icon: "success",
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didClose: () => {
+                                window.location.reload();
+                            }
+                        });
                     },
                     error: function (xhr, status, error) {
                         console.error('Error:', error);

@@ -25,7 +25,7 @@ class Order {
                 "data" => null
             ];
         } else {
-            $gateway = new TableGateway('order', $this->adapter);
+            $gateway = new TableGateway('vorder', $this->adapter);
             $rowset = $gateway->select();
 
             $resultSet = new ResultSet;

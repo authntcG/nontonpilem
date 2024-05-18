@@ -74,8 +74,8 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Application\Controller\Index' => 'Application\Controller\IndexController',
-            'Application\Controller\Alam' => 'Application\Controller\AlamController',
             'Application\Controller\API' => 'Application\Controller\APIController',
+            'Application\Controller\Riwayat' => 'Application\Controller\RiwayatController',
         ),
     ),
     'view_manager' => array(

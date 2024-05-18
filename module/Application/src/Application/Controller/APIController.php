@@ -8,27 +8,6 @@ use Application\Helper\HttpStatusCode;
 class APICOntroller extends AbstractActionController {
     private $config;
     private $db;
-    
-    public function serverInfoAction() {
-        // Mendapatkan objek response
-        $response = $this->getResponse();
-        
-        // Mendapatkan status code dari response
-        $statusCode = $response->getStatusCode();
-        
-        // Mendapatkan pesan berdasarkan status code
-        $statusMessage = HttpStatusCode::getStatusMessage($statusCode);
-
-        // Membuat data JSON dari objek response
-        $data = [
-            "code" => $statusCode,
-            "info" => $statusMessage
-        ];
-
-        // Mengembalikan data sebagai response JSON
-        $response->setContent(json_encode($data));
-        return $response;
-    }
 
     public function loadListAction() {
         try {
